@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+.msgs1 {
+    background: #E6E6E6;
+    color: #818080;
+    border: 1px solid #CCCCCC;
+}
+.msgs {
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    display: inline-block;
+    width: 200px;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid #0697DA;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    background: #0697DA;
+    cursor: pointer;
+}
+	</style>
+</head>
+<body>
+<input type="button" id="fsdmsg2" value="获取手机验证码" onclick="sendRand_oldMobile()"
+                    class="msgs">
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script>
+// 给绑定手机发送手机验证码
+	function sendRand_oldMobile() {
+    $.ajax({
+        type : "POST", // post提交方式,默认是get
+        url : contextpath + "shopuser/myaccount/SendRand.do", // 请求的数据源
+        data : { // 传递的数据
+            mobile : $('#check_mobile').val() ,// 手机号
+        },
+        success : function(response) {
+            var result = $.parseJSON(response);
+            alert(result.msg);
+            if(result.code=="0109" || result.code=="0110"){
+                var time = 60;
+                // var code = $(this);
+                $("#fsdmsg2").addClass("msgs1");
+                $("#fsdmsg2").removeAttr("onclick");
+                var t = setInterval(function() {
+                            time--;
+                            $("#fsdmsg2").val(time  + "秒后重新获取");
+                            if (time == 0) {
+                                clearInterval(t);
+                                $("#fsdmsg2").val("重新获取");
+                                $("#fsdmsg2").removeClass("msgs1");
+                                $("#fsdmsg2").attr("onclick","sendRand_oldMobile();");
+                            }
+                        }, 1000)
+            }
+        }
+    })
+}
+</script>
+</body>
+</html>
